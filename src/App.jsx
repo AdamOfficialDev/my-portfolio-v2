@@ -128,7 +128,6 @@ const App = () => {
           </>
         )}
       </Disclosure>
-
       {/* End Navbar */}
 
       {/* Home Section */}
