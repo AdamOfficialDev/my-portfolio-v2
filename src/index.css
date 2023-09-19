@@ -5,3 +5,14 @@
 html {
   scroll-behavior: smooth;
 }
+
+/* Add this to your CSS or create a Tailwind CSS class */
+.blur-bg {
+  backdrop-filter: blur(10px); /* Adjust the blur amount as needed */
+  background-color: rgba(
+    0,
+    0,
+    0,
+    0.5
+  ); /* Adjust the background color and transparency */
+}

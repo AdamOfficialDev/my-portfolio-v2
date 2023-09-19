@@ -10,7 +10,7 @@ import gojek from "./assets/img/clients/gojek.svg";
 import tokopedia from "./assets/img/clients/tokopedia.svg";
 import traveloka from "./assets/img/clients/traveloka.svg";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Disclosure } from "@headlessui/react";
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
 import Typed from "typed.js";
@@ -26,22 +26,23 @@ const App = () => {
     { name: "Contact", href: "#contact", current: false },
   ]);
 
-  // Funtion for classnames untuk menpdatkan class
+  // Function to generate class names for updating class
   function classNames(...classes) {
     return classes.filter(Boolean).join(" ");
   }
 
   const el = React.useRef(null);
 
+  // Typed effect for text animation
   React.useEffect(() => {
     const typed = new Typed(el.current, {
       strings: ["Muhammad Adam Abdillah"],
       typeSpeed: 50,
-      // backSpeed: 25, // Kecepatan mundur saat menghapus teks (opsional)
-      backDelay: 1500, // Jeda sebelum mulai menghapus teks (opsional)
-      // startDelay: 1000, // Jeda sebelum mulai mengetik (opsional)
-      loop: true, // Mengulangi animasi
-      showCursor: false, // Sembunyikan cursor
+      // backSpeed: 25, // Speed when deleting text (optional)
+      backDelay: 1500, // Delay before starting to delete text (optional)
+      // startDelay: 1000, // Delay before starting typing (optional)
+      loop: true, // Repeat animation
+      showCursor: false, // Hide cursor
     });
 
     return () => {
@@ -58,29 +59,51 @@ const App = () => {
     setNavigation(updatedNavigation);
   };
 
+  // Blur navbar on scroll
+  const [isScrolled, setIsScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollTop =
+        window.pageYOffset || document.documentElement.scrollTop;
+      setIsScrolled(scrollTop > 0);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
+
   return (
     <>
       {/* Navbar */}
-      <Disclosure as="nav" className="bg-dark fixed w-full z-10 top-0">
+      <Disclosure
+        as="nav"
+        className={`fixed top-0 z-10 w-full bg-dark ${
+          isScrolled ? "blur-bg" : ""
+        }`}
+      >
         {({ open }) => (
           <>
             <div className="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
-              <div className="relative flex justify-between h-16">
-                <div className="flex-shrink-0 flex items-center">
+              <div className="relative flex h-16 justify-between">
+                <div className="flex flex-shrink-0 items-center">
                   <h1 className="text-3xl text-primary">
                     My <span className="font-bold">Portfolio</span>
                   </h1>
                 </div>
-                <div className="hidden sm:flex sm:items-center sm:ml-6">
+                <div className="hidden sm:ml-6 sm:flex sm:items-center">
                   {navigation.map((item, index) => (
                     <a
                       key={item.name}
                       href={item.href}
                       className={classNames(
                         item.current
-                          ? "bg-gray-900 text-white"
+                          ? "bg-slate-600 text-white"
                           : "text-gray-300 hover:bg-gray-700 hover:text-white",
-                        "ml-4 px-3 py-2 rounded-md text-sm font-medium"
+                        "ml-4 rounded-md px-3 py-2 text-sm font-medium",
                       )}
                       aria-current={item.current ? "page" : undefined}
                       onClick={() => handleNavItemClick(index)}
@@ -89,9 +112,9 @@ const App = () => {
                     </a>
                   ))}
                 </div>
-                <div className="flex items-center -mr-2 sm:hidden">
+                <div className="-mr-2 flex items-center sm:hidden">
                   <Disclosure.Button
-                    className="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-white hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white"
+                    className="inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-gray-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white"
                     onClick={() => handleNavItemClick(-1)} // Reset current on mobile menu click
                   >
                     <span className="sr-only">Open main menu</span>
@@ -106,7 +129,7 @@ const App = () => {
             </div>
 
             <Disclosure.Panel className="sm:hidden">
-              <div className="px-2 pt-2 pb-3 space-y-1">
+              <div className="space-y-1 px-2 pb-3 pt-2">
                 {navigation.map((item, index) => (
                   <a
                     key={item.name}
@@ -115,7 +138,7 @@ const App = () => {
                       item.current
                         ? "bg-gray-900 text-white"
                         : "text-gray-300 hover:bg-gray-700 hover:text-white",
-                      "block px-3 py-2 rounded-md text-base font-medium"
+                      "block rounded-md px-3 py-2 text-base font-medium",
                     )}
                     aria-current={item.current ? "page" : undefined}
                     onClick={() => handleNavItemClick(index)}
@@ -139,25 +162,25 @@ const App = () => {
               <h1 className="text-base font-medium text-primary">
                 Halo guys👋, perkenalkan saya{" "}
                 <span
-                  className="font-bold text-dark block text-4xl mt-1"
+                  className="mt-1 block text-4xl font-bold text-dark"
                   ref={el}
                 >
                   Muhammad Adam Abdillah
                 </span>
               </h1>
-              <h2 className="text-base mt-2 mb-5 font-medium text-slate-500">
+              <h2 className="mb-5 mt-2 text-base font-medium text-slate-500">
                 Frontend Developer | <span className="text-dark">Gamer</span>
               </h2>
               <p className="mb-10 font-medium text-slate-400">
                 Belajar web programming itu mudah bukan?{" "}
-                <span className="text-red-600 italic font-extrabold">
+                <span className="font-extrabold italic text-red-600">
                   BUKAN!
                 </span>
               </p>
               <button className="animate-bounce shadow-md">
                 <a
                   href={AdamCV}
-                  className="rounded-full bg-primary py-3 px-8 text-base font-semibold text-white transition duration-300 ease-in-out hover:opacity-80 hover:shadow-lg"
+                  className="rounded-full bg-primary px-8 py-3 text-base font-semibold text-white transition duration-300 ease-in-out hover:opacity-80 hover:shadow-lg"
                   download={AdamCV}
                 >
                   Download CV
@@ -169,7 +192,7 @@ const App = () => {
                 <img
                   src={Adam}
                   alt="Muhammad Adam Abdillah"
-                  className="rounded-full shadow-lg mx-auto"
+                  className="mx-auto rounded-full shadow-lg"
                 />
               </div>
             </div>
@@ -178,7 +201,7 @@ const App = () => {
       </section>
       {/* End Home Section */}
       {/* About Section */}
-      <section id="about" className="pt-16 pb-32 dark:bg-dark">
+      <section id="about" className="pb-32 pt-16 dark:bg-dark">
         <div className="container">
           <div className="flex flex-wrap">
             <div className="mb-10 w-full px-4 lg:w-1/2">
@@ -188,7 +211,7 @@ const App = () => {
               <h2 className="mb-5 max-w-md text-2xl font-semibold text-dark dark:text-white lg:text-4xl">
                 Yuk, belajar web programming bersama!
               </h2>
-              <p className="text-justify max-w-xl text-base font-medium text-secondary lg:text-lg">
+              <p className="max-w-xl text-justify text-base font-medium text-secondary lg:text-lg">
                 Lorem ipsum dolor sit amet consectetur adipisicing elit. Id
                 temporibus maiores sequi vitae saepe iusto deleniti!
               </p>
@@ -197,7 +220,7 @@ const App = () => {
               <h3 className="mb-4 text-2xl font-semibold text-dark dark:text-white lg:pt-10 lg:text-3xl">
                 Mari berteman
               </h3>
-              <p className="text-justify mb-6 text-base font-medium text-secondary lg:text-lg">
+              <p className="mb-6 text-justify text-base font-medium text-secondary lg:text-lg">
                 Lorem ipsum dolor sit amet consectetur adipisicing elit. Ducimus
                 quos, hic animi quasi ipsum exercitationem ipsam incidunt
                 voluptatem.
@@ -283,7 +306,7 @@ const App = () => {
       {/* Projek Section */}
       <section
         id="portfolio"
-        className="bg-slate-100 pt-36 pb-16 dark:bg-slate-800"
+        className="bg-slate-100 pb-16 pt-36 dark:bg-slate-800"
       >
         <div className="container">
           <div className="w-full px-4">
@@ -307,22 +330,22 @@ const App = () => {
               <div className="overflow-hidden rounded-md shadow-md">
                 <img
                   src={portfolio1}
-                  className="hover:scale-110 transition-all duration-500"
+                  className="transition-all duration-500 hover:scale-110"
                   alt="My portfolio"
                   width="w-full"
                 />
               </div>
-              <h3 className="mt-5 mb-3 text-xl font-semibold text-dark dark:text-white">
+              <h3 className="mb-3 mt-5 text-xl font-semibold text-dark dark:text-white">
                 My Personal Portfolio
               </h3>
-              <p className="text-base font-medium text-secondary mb-[12px]">
+              <p className="mb-[12px] text-base font-medium text-secondary">
                 Lorem ipsum dolor sit amet, consectetur adipisicing elit. Eius,
                 iusto! Aliquam, corporis.
               </p>
               <a
                 href="https://adamofficialdev.github.io/"
                 target="_blank"
-                className="rounded-lg bg-primary py-3 px-5 text-sm font-medium text-white hover:opacity-80"
+                className="rounded-lg bg-primary px-5 py-3 text-sm font-medium text-white hover:opacity-80"
               >
                 Demo
               </a>
@@ -331,22 +354,22 @@ const App = () => {
               <div className="overflow-hidden rounded-md shadow-md">
                 <img
                   src={portfolio2}
-                  className="hover:scale-110 transition-all duration-500"
+                  className="transition-all duration-500 hover:scale-110"
                   alt="MovieDB"
                   width="w-full"
                 />
               </div>
-              <h3 className="mt-5 mb-3 text-xl font-semibold text-dark dark:text-white">
+              <h3 className="mb-3 mt-5 text-xl font-semibold text-dark dark:text-white">
                 React MovieDB
               </h3>
-              <p className="text-base font-medium text-secondary mb-[12px]">
+              <p className="mb-[12px] text-base font-medium text-secondary">
                 Lorem ipsum dolor sit amet, consectetur adipisicing elit. Eius,
                 iusto! Aliquam, corporis.
               </p>
               <a
                 href="https://adamreactmovie-adamofficialdev.vercel.app/"
                 target="_blank"
-                className="rounded-lg bg-primary py-3 px-5 text-sm font-medium text-white hover:opacity-80"
+                className="rounded-lg bg-primary px-5 py-3 text-sm font-medium text-white hover:opacity-80"
               >
                 Demo
               </a>
@@ -355,22 +378,22 @@ const App = () => {
               <div className="overflow-hidden rounded-md shadow-md">
                 <img
                   src={portfolio3}
-                  className="hover:scale-110 transition-all duration-500"
+                  className="transition-all duration-500 hover:scale-110"
                   alt="Portfolio V2"
                   width="w-full"
                 />
               </div>
-              <h3 className="mt-5 mb-3 text-xl font-semibold text-dark dark:text-white">
+              <h3 className="mb-3 mt-5 text-xl font-semibold text-dark dark:text-white">
                 My Personal Portfolio V2
               </h3>
-              <p className="text-base font-medium text-secondary mb-[12px]">
+              <p className="mb-[12px] text-base font-medium text-secondary">
                 Lorem ipsum dolor sit amet, consectetur adipisicing elit. Eius,
                 iusto! Aliquam, corporis.
               </p>
               <a
                 href="#"
                 target="_blank"
-                className="rounded-lg bg-primary py-3 px-5 text-sm font-medium text-white hover:opacity-80"
+                className="rounded-lg bg-primary px-5 py-3 text-sm font-medium text-white hover:opacity-80"
               >
                 Demo
               </a>
@@ -379,22 +402,22 @@ const App = () => {
               <div className="overflow-hidden rounded-md shadow-md">
                 <img
                   src={portfolio4}
-                  className="hover:scale-110 transition-all duration-500"
+                  className="transition-all duration-500 hover:scale-110"
                   alt="todo app"
                   width="w-full"
                 />
               </div>
-              <h3 className="mt-5 mb-3 text-xl font-semibold text-dark dark:text-white">
+              <h3 className="mb-3 mt-5 text-xl font-semibold text-dark dark:text-white">
                 To Do List App
               </h3>
-              <p className="text-base font-medium text-secondary mb-[12px]">
+              <p className="mb-[12px] text-base font-medium text-secondary">
                 Lorem ipsum dolor sit amet, consectetur adipisicing elit. Eius,
                 iusto! Aliquam, corporis.
               </p>
               <a
                 href="https://to-do-list-react-js-coral.vercel.app/"
                 target="_blank"
-                className="rounded-lg bg-primary py-3 px-5 text-sm font-medium text-white hover:opacity-80"
+                className="rounded-lg bg-primary px-5 py-3 text-sm font-medium text-white hover:opacity-80"
               >
                 Demo
               </a>
@@ -405,14 +428,14 @@ const App = () => {
       {/* End Projek Section */}
       {/* Client Section */}
       <section id="clients">
-        <div className="pt-36 pb-32 bg-slate-800">
+        <div className="bg-slate-800 pb-32 pt-36">
           <div className="container">
             <div className="w-full px-4">
-              <div className="mx-auto text-center mb-16">
-                <h4 className="text-primary text-lg mb-2 font-semibold">
+              <div className="mx-auto mb-16 text-center">
+                <h4 className="mb-2 text-lg font-semibold text-primary">
                   Clients
                 </h4>
-                <h2 className="text-3xl font-bold text-white mb-4 sm:text-4xl lg:text-5xl">
+                <h2 className="mb-4 text-3xl font-bold text-white sm:text-4xl lg:text-5xl">
                   Bekerjasama Dengan
                 </h2>
                 <p className="text-md font-medium text-secondary md:text-lg">
@@ -426,28 +449,28 @@ const App = () => {
                 <button className="mx-4 max-w-[120px] py-4 opacity-60 grayscale transition duration-500 hover:opacity-100 hover:grayscale-0 lg:mx-6 xl:mx-8">
                   <img
                     src={google}
-                    className="hover:scale-110 transition-all duration-500"
+                    className="transition-all duration-500 hover:scale-110"
                     alt="google"
                   />
                 </button>
                 <button className="mx-4 max-w-[120px] py-4 opacity-60 grayscale transition duration-500 hover:opacity-100 hover:grayscale-0 lg:mx-6 xl:mx-8">
                   <img
                     src={gojek}
-                    className="hover:scale-110 transition-all duration-500"
+                    className="transition-all duration-500 hover:scale-110"
                     alt="gojek"
                   />
                 </button>
                 <button className="mx-4 max-w-[120px] py-4 opacity-60 grayscale transition duration-500 hover:opacity-100 hover:grayscale-0 lg:mx-6 xl:mx-8">
                   <img
                     src={traveloka}
-                    className="hover:scale-110 transition-all duration-500"
+                    className="transition-all duration-500 hover:scale-110"
                     alt="traveloka"
                   />
                 </button>
                 <button className="mx-4 max-w-[120px] py-4 opacity-60 grayscale transition duration-500 hover:opacity-100 hover:grayscale-0 lg:mx-6 xl:mx-8">
                   <img
                     src={tokopedia}
-                    className="hover:scale-110 transition-all duration-500"
+                    className="transition-all duration-500 hover:scale-110"
                     alt="tokopedia"
                   />
                 </button>
@@ -459,7 +482,7 @@ const App = () => {
       {/* End Client Section */}
 
       {/* blog section */}
-      <section id="blog" className="bg-slate-100 pt-36 pb-32 dark:bg-dark">
+      <section id="blog" className="bg-slate-100 pb-32 pt-36 dark:bg-dark">
         <div className="container">
           <div className="w-full px-4">
             <div className="mx-auto mb-16 max-w-xl text-center">
@@ -480,9 +503,9 @@ const App = () => {
                 <img
                   src="https://source.unsplash.com/360x200?laptop"
                   alt="Programming"
-                  className="w-[95%] mx-auto mt-3 rounded-lg rounded-tr-md rounded-bl-md rounded-tl-xl rounded-br-xl"
+                  className="mx-auto mt-3 w-[95%] rounded-lg rounded-bl-md rounded-br-xl rounded-tl-xl rounded-tr-md"
                 />
-                <div className="py-8 px-6">
+                <div className="px-6 py-8">
                   <h3>
                     <p className="mb-3 block truncate text-xl font-semibold text-dark dark:text-white">
                       Tips Belajar Programming
@@ -494,7 +517,7 @@ const App = () => {
                   </p>
                   <a
                     href="#"
-                    className="py-3 rounded-lg bg-primary px-4 text-sm font-medium text-white hover:opacity-80"
+                    className="rounded-lg bg-primary px-4 py-3 text-sm font-medium text-white hover:opacity-80"
                   >
                     Baca Selengkapnya
                   </a>
@@ -506,9 +529,9 @@ const App = () => {
                 <img
                   src="https://source.unsplash.com/360x200?mechanical+keyboard"
                   alt="Mechanical Keyboard"
-                  className="w-[95%] mx-auto mt-3 rounded-lg rounded-tr-md rounded-bl-md rounded-tl-xl rounded-br-xl"
+                  className="mx-auto mt-3 w-[95%] rounded-lg rounded-bl-md rounded-br-xl rounded-tl-xl rounded-tr-md"
                 />
-                <div className="py-8 px-6">
+                <div className="px-6 py-8">
                   <h3>
                     <p className="mb-3 block truncate text-xl font-semibold text-dark dark:text-white">
                       Review Mechanical Keyboard
@@ -520,7 +543,7 @@ const App = () => {
                   </p>
                   <a
                     href="#"
-                    className="py-3 rounded-lg bg-primary px-4 text-sm font-medium text-white hover:opacity-80"
+                    className="rounded-lg bg-primary px-4 py-3 text-sm font-medium text-white hover:opacity-80"
                   >
                     Baca Selengkapnya
                   </a>
@@ -532,9 +555,9 @@ const App = () => {
                 <img
                   src="https://source.unsplash.com/360x200?computer"
                   alt="Coffee"
-                  className="w-[95%] mx-auto mt-3 rounded-lg rounded-tr-md rounded-bl-md rounded-tl-xl rounded-br-xl"
+                  className="mx-auto mt-3 w-[95%] rounded-lg rounded-bl-md rounded-br-xl rounded-tl-xl rounded-tr-md"
                 />
-                <div className="py-8 px-6">
+                <div className="px-6 py-8">
                   <h3>
                     <p className="mb-3 block truncate text-xl font-semibold text-dark dark:text-white">
                       Menikmati Secangkir Kopi
@@ -546,7 +569,7 @@ const App = () => {
                   </p>
                   <a
                     href="#"
-                    className="py-3 rounded-lg bg-primary px-4 text-sm font-medium text-white hover:opacity-80"
+                    className="rounded-lg bg-primary px-4 py-3 text-sm font-medium text-white hover:opacity-80"
                   >
                     Baca Selengkapnya
                   </a>
@@ -559,7 +582,7 @@ const App = () => {
       {/* end blog section */}
 
       {/* Contact Section */}
-      <section id="contact" class="pt-36 pb-32 dark:bg-slate-800">
+      <section id="contact" class="pb-32 pt-36 dark:bg-slate-800">
         <div class="container">
           <div class="w-full px-4">
             <div class="mx-auto mb-16 max-w-xl text-center">
@@ -603,11 +626,11 @@ const App = () => {
                 <textarea
                   type="email"
                   id="email"
-                  class="h-32 input input-bordered w-full rounded-md  p-3 text-dark focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+                  class="input input-bordered h-32 w-full rounded-md  p-3 text-dark focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
                 />
               </div>
               <div class="w-full px-4">
-                <button class="w-xl rounded-lg bg-primary py-3 px-16 text-base font-semibold text-white transition duration-500 hover:opacity-80 hover:shadow-md">
+                <button class="w-xl rounded-lg bg-primary px-16 py-3 text-base font-semibold text-white transition duration-500 hover:opacity-80 hover:shadow-md">
                   Kirim
                 </button>
               </div>
@@ -619,7 +642,7 @@ const App = () => {
 
       {/* footer */}
       <section>
-        <footer class="footer footer-center bg-dark p-4 text-base-content bottom-0 left-0 right-0">
+        <footer class="footer footer-center bottom-0 left-0 right-0 bg-dark p-4 text-base-content">
           <aside>
             <p className="text-white">
               Copyright © 2023 -{" "}
